@@ -26,5 +26,20 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
+  Router.beforeEach((to, from, next) => {
+    const isAuthenticated = !!localStorage.getItem('auth_token') // Verifica se o token está presente
+
+    // Verifica se a rota requer autenticação
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!isAuthenticated) {
+        next({ name: 'login' }) // Redireciona para o login se não estiver autenticado
+      } else {
+        next() // Prossegue para a rota protegida
+      }
+    } else {
+      next() // Prossegue para as rotas públicas
+    }
+  })
+
   return Router
 })

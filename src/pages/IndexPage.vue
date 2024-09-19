@@ -16,6 +16,17 @@ defineOptions({
 });
 
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const logout = () => {
+  // Remove o token do localStorage ao fazer logout
+  localStorage.removeItem('auth_token')
+
+  // Redireciona o usuário para a página de login
+  router.push({ name: 'login' })
+}
 
 // Simulação de dados
 const button_id = 1;
