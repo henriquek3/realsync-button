@@ -5,6 +5,7 @@ const routes = [
     children: [
       {
         path: '',
+        name: 'dashboard',
         component: () => import('pages/IndexPage.vue'),
         meta: { requiresAuth: true }, // Rota protegida
       },
@@ -12,7 +13,7 @@ const routes = [
         path: '/login',
         name: 'login',
         component: () => import('pages/LoginPage.vue'),
-      }
+      },
     ],
   },
 
@@ -20,7 +21,7 @@ const routes = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    redirect: '/login'
+    redirect: '/login',
   },
 ];
 

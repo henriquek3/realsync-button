@@ -52,18 +52,14 @@ import { ref } from 'vue';
 import { api } from 'boot/axios';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
-
-
-// Variáveis de estado
 const email = ref('');
 const password = ref('');
-const loading = ref(false);
-const errorMessage = ref(null);
 const emailError = ref(false);
 const passwordError = ref(false);
+const errorMessage = ref(null);
+const loading = ref(false);
+const router = useRouter();
 
-// Função de login
 const login = async () => {
   if (!email.value || !password.value) {
     emailError.value = !email.value;
@@ -81,13 +77,30 @@ const login = async () => {
       password: password.value,
     });
 
-    // Armazena o token no localStorage
-    localStorage.setItem('auth_token', response.data.token);
+    // Verifica o conteúdo da resposta
+    console.log('Resposta da API:', response);
 
-    // Redireciona para o dashboard
-    router.push({ name: 'dashboard' });
+    if (response.data?.token) {
+      // Armazena o token no localStorage
+      localStorage.setItem('auth_token', response.data.token);
+
+      // Redireciona para o dashboard
+      console.log('Redirecionando para o dashboard...');
+      router.push({ name: 'dashboard' });
+    } else {
+      throw new Error('Token não encontrado na resposta.');
+    }
+
   } catch (error) {
-    errorMessage.value = error.response?.data?.error || 'Erro ao fazer login.';
+    console.error('Erro no processo de login:', error);
+
+    if (error.response) {
+      errorMessage.value = error.response.data?.error || 'Erro ao fazer login (problema de servidor).';
+    } else if (error.request) {
+      errorMessage.value = 'Erro ao fazer login (sem resposta do servidor).';
+    } else {
+      errorMessage.value = 'Erro ao fazer login (erro desconhecido).';
+    }
   } finally {
     loading.value = false;
   }
