@@ -83,6 +83,7 @@ const login = async () => {
     if (response.data?.token) {
       // Armazena o token no localStorage
       localStorage.setItem('auth_token', response.data.token);
+      localStorage.setItem('button_id', response.data.token.button_id);
 
       // Redireciona para o dashboard
       console.log('Redirecionando para o dashboard...');

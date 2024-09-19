@@ -5,7 +5,7 @@
       :label="isOn ? 'Ligado' : 'Desligado'"
       @click="toggle"
       :icon="isOn ? 'alarm_on' : 'alarm_off'"
-      class="full-width full-height"
+      size="lg"
     />
   </q-page>
 </template>
@@ -15,22 +15,16 @@ defineOptions({
   name: 'IndexPage',
 });
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const logout = () => {
-  // Remove o token do localStorage ao fazer logout
-  localStorage.removeItem('auth_token')
-
-  // Redireciona o usuário para a página de login
-  router.push({ name: 'login' })
-}
+const isAuthenticated = computed(() => !!localStorage.getItem('auth_token'));
 
 // Simulação de dados
-const button_id = 1;
-const production_operator_id = 123; // ID do operador (simulado)
+const storedButtonId = localStorage.getItem('button_id');
+const button_id = storedButtonId !== null ? JSON.parse(storedButtonId) : 1;
 
 // Variáveis reativas
 const isOn = ref(false);
@@ -47,7 +41,6 @@ const addLog = (event) => {
   const logEntry = {
     button_id: button_id,
     event: event,
-    production_operator_id: production_operator_id,
     created_at: getFormattedTimestamp(),
   };
   buttonHistories.value.push(logEntry);
@@ -81,18 +74,3 @@ const toggle = () => {
   localStorage.setItem('button-status', JSON.stringify(isOn.value));
 };
 </script>
-
-
-<style scoped>
-.q-page {
-  height: 100vh;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.full-height {
-  height: 100%;
-}
-</style>
